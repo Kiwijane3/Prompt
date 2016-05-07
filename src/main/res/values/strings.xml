@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">PROMPT</string>
+
+    <string name="OPW_API_KEY">33f188d7c201573c465c5c9929babaa0</string>
+
+    <string name="default_username">user</string>
+
+    <!-- input keywords -->
+    <string name="keyword_web_browser">WEB</string>
+    <string name="keyword_email">EMAIL</string>
+    <string name="keyword_search">SEARCH</string>
+    <string name="keyword_phone">PHONE</string>
+    <string name="keyword_set">SET</string>
+    <string name="keyword_sms">SMS</string>
+    <string name="keyword_upgrade">UPGRADE</string>
+    <string name="keyword_list">LIST</string>
+    <string name="keyword_credits">CREDITS</string>
+
+    <!-- default keywords for weblinks -->
+    <string-array name="default_keywords_web">
+        <item>GOOGLE</item>
+        <item>FACEBOOK</item>
+    </string-array>
+
+    <string-array name="default_addresses_web">
+        <item>http://www.google.com</item>
+        <item>http://www.facebook.com</item>
+    </string-array>
+
+    <!-- Phrases for greeter -->
+    <string name="phrase_hello" formatted="false">Hello %s!</string>
+    <string name="phrase_weather_intro" formatted="false">Current weather conditions:</string>
+    <string name="phrase_temperature" formatted="false">Temperature = %.1f%s</string> <!--Use format to add symbol-->
+    <string name="phrase_wind_speed" formatted="false">Windspeed = %.1f %s</string>
+    <string name="phrase_rain" formatted="false">Rain chance = %.0f%s</string>
+    <string name="phrase_missed_calls" formatted="false">You have %d new missed calls</string>
+    <string name="phrase_new_sms" formatted="false">You received %d new texts</string>
+
+    <!-- Phrases for premium -->
+    <string name="purchases_not_available">Previous purchase data could not be accessed</string>
+    <string name="purchase_failed">Could not properly communicate with server</string>
+    <string name="puchase_cancelled">Purchase was cancelled</string>
+    <string name="purchase_succeeded">Thank you for purchasing Prompt premium!</string>
+
+    <string name="fragment_from" formatted="false">from %s</string>
+
+    <!-- options for preferences command -->
+    <string name="option_name">NAME</string>
+    <string name="option_weblink">WEBLINK</string>
+    <string name="option_measurement_system">UNITS</string>
+        <!-- parameters for measurements option -->
+        <string name="parameter_imp">IMPERIAL</string>
+        <string name="parameter_si">SI</string>
+        <string name="parameter_metric">METRIC</string>
+
+    <!-- units system dependent characters -->
+    <string name="imp_speed">mph</string>
+    <string name="si_speed">kph</string>
+
+    <!-- Messages for ResultBundles -->
+    <string name="message_generic_instantiation">Don\'t instantiate the base class, you damn spaz!</string>
+    <string name="message_upgrade_needed">Trial expired; Please buy premium to use this feature</string>
+    <string name="message_call_failed">Couldn\'t make call</string>
+    <string name="message_insufficient_arguments">Not enough arguments</string>
+    <string name="message_weblink_registered" formatted="false">
+        Command %s registered as weblink</string>
+    <string name="message_system_not_specified">Which system?</string>
+    <string name="message_system_not_recognized">System name not recognised</string>
+    <string name="message_system_change_success">Unit system changed</string>
+    <string name="message_no_search_argument">No term specified</string>
+    <string name="message_generic_ok">OK</string>
+    <string name="message_no_such_command">No such command</string>
+    <string name="message_security_exception">The launcher does not have the needed permission!</string>
+
+    <string name="credits">Icon created with Android Asset Studio</string>
+
+</resources>
