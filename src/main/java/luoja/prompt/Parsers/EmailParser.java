@@ -22,16 +22,13 @@ public class EmailParser extends GenericParser {
     @Override
     protected ResultBundle parse(String[] args) {
         if (args.length  > 0){
-            if (!premium()) return needUpgradeBundle();
-            else {
-                Intent intent = emailIntent();
-                intent.putExtra(Intent.EXTRA_EMAIL, addressOfContact(args[0]));
-                if (args.length > 1){
-                    //TODO: include body
-                }
-                launch(intent);
-                return success();
+            Intent intent = emailIntent();
+            intent.putExtra(Intent.EXTRA_EMAIL, addressOfContact(args[0]));
+            if (args.length > 1){
+                //TODO: include body
             }
+            launch(intent);
+            return success();
         } else {
             launchAppFromIntent(emailIntent());
             return success();

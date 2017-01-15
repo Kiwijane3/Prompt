@@ -43,8 +43,7 @@ public class Greeter {
         hello();
         showMissedCalls();
         showNewSms();
-        if (premium())
-            printWeather();
+        printWeather();
     }
 
     private void clear(){

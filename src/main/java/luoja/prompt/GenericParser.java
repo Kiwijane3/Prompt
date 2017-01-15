@@ -14,7 +14,7 @@ import java.util.Date;
 /**
  * Parser should receive an array starting with the option and omitting the command;
  */
-public class GenericParser {
+public abstract class GenericParser {
 
     protected Context context;
 
@@ -23,41 +23,18 @@ public class GenericParser {
     }
 
     public ResultBundle accept(String[] args){
-        if (args.length > 0 && premium())
-            return parse(args); //By default, parsers can only accept arguments in parse premium;
-        else
-            return needUpgradeBundle();
+        return parse(args);
     }
 
-    protected ResultBundle parse(String[] args){
-        return new ResultBundle(false, context.getString(R.string.message_generic_instantiation));
-    }
+    protected abstract ResultBundle parse(String[] args);
 
     protected void launch(Intent intent){
         context.startActivity(intent);
     }
 
-    /**
-     * Checks if premium features are available; i.e, has the app been installed
-     * for less than 30 days, or has Prompt premium been purchased.
-     * @return
-     */
-    protected boolean premium(){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(Val.PREFERENCES_NAME, 0);
-        if (!sharedPreferences.getBoolean(Val.KEY_PREMIUM, false)) {
-            long now = new Date().getTime();
-            long endTrial = sharedPreferences.getLong(Val.KEY_TRIAL_END, now);
-            if (now > endTrial) return false;
-        }
-        return true;
-    }
 
     protected PackageManager packageManager(){
         return context.getPackageManager();
-    }
-
-    protected ResultBundle needUpgradeBundle(){
-        return new ResultBundle(false, context.getString(R.string.message_upgrade_needed));
     }
 
     /**If end is zero, the subArray will contain all elements after start;

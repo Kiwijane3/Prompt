@@ -37,42 +37,18 @@ public class Launcher extends AppCompatActivity {
     private static final String KEY_APPLIST = "appList";
     private static final String KEY_WEBLIST = "webList";
 
-    private static final String PREMIUM_SKU = "prompt_premium";
     private static final int PURCHASE_INTENT_CODE = 1011;
 
     private AppList appList;
     private ParserDirector parserDirector;
     private WebList webList;
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
     private IInAppBillingService billingService;
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            billingService = IInAppBillingService.Stub.asInterface(service);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            billingService = null;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
-
-        setTrialEndDate();
-
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
-        serviceIntent.setPackage("com.android.vending");
-        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
 
         if (savedInstanceState != null) {
             appList = new AppList(this, (HashMap) savedInstanceState.getSerializable(KEY_APPLIST));
@@ -112,12 +88,7 @@ public class Launcher extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
         new Greeter(this, outputText()).greet();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (billingService != null) unbindService(serviceConnection);
+        appList.doBackgroundUpdate();
     }
 
     /**
@@ -144,12 +115,8 @@ public class Launcher extends AppCompatActivity {
                     result = webList.launch(command);
                     if (result.success()) {
                         out = result.message();
-                    } else { //Check for the inbuilt commands.
-                        if (command.toUpperCase().equals(keywordUpgrade())) {
-                            upgrade();
-                            out = "";
-                        }
-                        else if (command.toUpperCase().equals(keywordList())) {
+                    } else {
+                        if (command.toUpperCase().equals(keywordList())) {
                             list();
                             out = "";
                         }
@@ -174,15 +141,6 @@ public class Launcher extends AppCompatActivity {
     protected void list(){
         print(appList.toString() + webList.toString());
     }
-
-    /**
-     * Keyword for purchasing parse premium.
-     * @return
-     */
-    private String keywordUpgrade(){
-        return getString(R.string.keyword_upgrade).toUpperCase();
-    }
-
     /**
      * Keyword for listing all apps and registered links.
      * @return
@@ -194,41 +152,6 @@ public class Launcher extends AppCompatActivity {
     private String keywordCredits() {
         return getString(R.string.keyword_credits).toUpperCase();
     }
-
-    private void setTrialEndDate(){
-        SharedPreferences sharedPreferences = sharedPreferences();
-        if (sharedPreferences.getLong(Val.KEY_TRIAL_END, 0) == 0){ //See if it this is unavailable
-            long now = new Date().getTime();
-            long trialEnd = now + Val.TRIAL_PERIOD;
-            sharedPreferences.edit().putLong(Val.KEY_TRIAL_END, trialEnd).apply();
-        }
-
-    }
-
-    private void makePremium(){
-        sharedPreferences().edit().putBoolean(Val.KEY_PREMIUM, true).commit();
-    }
-
-    private void upgrade(){
-        try {
-            Bundle ownedItems = billingService.getPurchases(3, getPackageName(), "inapp", null);
-            if (ownedItems.getInt("RESPONSE_CODE") == 0) {
-                List<String> ownedSkus = ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
-                if (ownedSkus.contains(PREMIUM_SKU))
-                    makePremium();
-                else {
-                    Bundle upgradeIntentBundle = billingService.getBuyIntent(3, getPackageName(), PREMIUM_SKU,
-                            "inapp", null);
-                    PendingIntent intent = upgradeIntentBundle.getParcelable("BUY_INTENT");
-                    startIntentSenderForResult(intent.getIntentSender(), PURCHASE_INTENT_CODE,
-                            new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
-                }
-            } else outputText().append(getString(R.string.purchases_not_available));
-        } catch (RemoteException re){
-            outputText().append(getString(R.string.purchase_failed));
-        } catch (IntentSender.SendIntentException sie){}
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -255,43 +178,4 @@ public class Launcher extends AppCompatActivity {
         return getSharedPreferences(Val.PREFERENCES_NAME, 0);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Launcher Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://luoja.prompt/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Launcher Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://luoja.prompt/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
-    }
 }
